@@ -17,14 +17,14 @@ public class HashTable {
 
     }
 
-    /* El método HashFunction nos permite transformar una entrada (la llave) en un hashValue(entero).
+    /* El método hashFunction nos permite transformar una entrada (la llave) en un hashValue(entero).
     *  Es utilizando este hashValue que accedemos al índice (al valor) del elemento que buscamos
     * @params:
     *   String s: La llave 'string' que vamos a convertir en un hashValue.
     * @returns:
     *   int hv: El entero hashValue que se produce con la función. Se utilizará para acceder al valor de la HashTable.
     *  */
-    private int HashFunction(String s) {
+    private int hashFunction(String s) {
         // Utilizamos un multiplicador para cada posición de la cadena, el cual se incrementará conforme avanzamos en la cadena
         int mult = 1;
         // Inicializamos el valor del hashValue en 0
@@ -44,6 +44,7 @@ public class HashTable {
     /* El método insertar() nos sirve para colocar una nueva entrada en la HashTable.
     * Al insertar un elemento, se hace un llamado a la función revisarCarga() que se encarga de verificar que aún
     * queden espacios disponibles en la hash table.
+    * Utiliza el método de linear probing para evitar colisiones.
     * @params:
     *   String llave: La llave que vamos a utilizar para localizar al elemento.
     *   int valor: El valor asociado con la llave.
@@ -53,8 +54,8 @@ public class HashTable {
     public void insertar(String llave, int valor){
         // Generamos una nueva entrada con llave, valor
         Entrada nuevoElemento = new Entrada(llave, valor);
-        // Obtenemos el HashValue llamando a la función HashFunction
-        int hashValue = HashFunction(llave);
+        // Obtenemos el HashValue llamando a la función hashFunction
+        int hashValue = hashFunction(llave);
 
         // Atravesamos los espacios en la HashTable hasta encontrar un espacio vacío o uno que ya esté ocupado por la misma llave
         while (this.espacios[hashValue] != null){
@@ -106,11 +107,96 @@ public class HashTable {
                 nuevaHashTable.insertar(this.espacios[i].llave, this.espacios[i].valor);
             }
 
+        }
         // Actualizamos el tamaño y el número de espacios de la nueva HashTable
         this.tamaño = nuevaHashTable.tamaño;
         this.espacios = nuevaHashTable.espacios;
 
-        }
     }
 
+    /* La función recuperar() nos regresa el valor almacenado que corresponde a la llave indicada por el usuario.
+    * Para hacerlo, se debe llamar a la función hashFunction que nos otorgará el valor del hash. Si no se encuentra el
+    * elemento en esa celda, se intentará con la siguiente (o hasta haber recorrido la hashTable).
+    * @params:
+    *   String llave: La cadena con la que almacenamos el valor dentro de la hash table.
+    * @returns:
+    *   Entrada
+    * */
+    public java.lang.Integer recuperar(String llave){
+        // Primero calculamos un hashValue
+        int hashValue = hashFunction(llave);
+
+        // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
+        while (this.espacios[hashValue] != null){
+            if (this.espacios[hashValue].llave.equals(llave)){
+                return this.espacios[hashValue].valor;
+            }
+            // Si no se encuentra en la primera celda, buscamos en la siguiente de forma cíclica.
+            hashValue = (hashValue + 1) % this.tamaño;
+        }
+        System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
+        return null;
+    }
+
+    /* El método insertarCuadratica() nos sirve para colocar una nueva entrada en la HashTable.
+     * Al insertar un elemento, se hace un llamado a la función revisarCarga() que se encarga de verificar que aún
+     * queden espacios disponibles en la hash table.
+     * Utiliza el método de quadratic probing para evitar colisiones.
+     * @params:
+     *   String llave: La llave que vamos a utilizar para localizar al elemento.
+     *   int valor: El valor asociado con la llave.
+     * @returns:
+     *   void (También podría regresar un Booleano para comprobar si todo salió en orden).
+     * */
+    public void insertarCuadratica(String llave, int valor){
+        // Generamos una nueva entrada con llave, valor
+        Entrada nuevoElemento = new Entrada(llave, valor);
+        // Obtenemos el HashValue llamando a la función hashFunction
+        int hashValue = hashFunction(llave);
+        // Para implementar quadratic probing, necesitamos inicializar el primer término a la potencia 1
+        int termino = 1;
+        // Atravesamos los espacios en la HashTable hasta encontrar un espacio vacío o uno que ya esté ocupado por la misma llave
+        while (this.espacios[hashValue] != null){
+            // Si encontramos la llave en algún espacio, salimos del bucle
+            if (this.espacios[hashValue].llave.equals(llave)){
+                break;
+            }
+            // Vamos al siguiente espacio de forma circular
+            hashValue = (hashValue + termino*termino) % this.tamaño;
+            termino +=1;
+        }
+        // Si el espacio estaba disponible, lo insertamos ahí e incrementamos la variable numElementos
+        if (this.espacios[hashValue] == null){
+            this.numElementos++;
+        }
+        this.espacios[hashValue] = nuevoElemento;
+        revisarCarga();
+    }
+
+    /* La función recuperarCuadrada() es el complemento de la función insertarCuadrada().
+     * Nos regresa el valor almacenado que corresponde a la llave indicada por el usuario.
+     * Para hacerlo, se debe llamar a la función hashFunction que nos otorgará el valor del hash. Si no se encuentra el
+     * elemento en esa celda, se intentará con la siguiente (o hasta haber recorrido la hashTable).
+     * @params:
+     *   String llave: La cadena con la que almacenamos el valor dentro de la hash table.
+     * @returns:
+     *   Entrada
+     * */
+    public java.lang.Integer recuperarCuadrada(String llave){
+        // Primero calculamos un hashValue
+        int hashValue = hashFunction(llave);
+        // Puesto que esta función utiliza quadratic probing, se requiere el término a la potencia n
+        int termino = 1;
+        // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
+        while (this.espacios[hashValue] != null){
+            if (this.espacios[hashValue].llave.equals(llave)){
+                return this.espacios[hashValue].valor;
+            }
+            // Si no se encuentra en la primera celda, buscamos en la siguiente de forma cíclica.
+            hashValue = (hashValue + termino * termino) % this.tamaño;
+            termino += 1;
+        }
+        System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
+        return null;
+    }
 }
