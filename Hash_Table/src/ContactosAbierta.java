@@ -2,22 +2,23 @@ import java.sql.SQLOutput;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-/* Aplicación práctica de la clase HashTable. Se simulará una agenda telefónica en donde un usuario puede guardar sus contactos.
-* Esta clase instancía la clase HashTable y le pone nombres distintos a los métodos: llamarContacto, agregarContacto, modificarContacto,
-* eliminarContacto y verContactos.
-* La agenda se inicializa con un espacio inicial de 100 contactos.
-* */
-public class Contactos {
-    HashTable misContactos = new HashTable(100);
+/* Aplicación práctica de la clase HashTable. Esta versión utiliza una HashTable Abierta.
+ * Se simulará una agenda telefónica en donde un usuario puede guardar sus contactos.
+ * Esta clase instancía la clase HashTableAbierta y le pone nombres distintos a los métodos: llamarContacto, agregarContacto, modificarContacto,
+ * eliminarContacto y verContactos.
+ * La agenda se inicializa con un espacio inicial de 100 contactos.
+ * */
+public class ContactosAbierta{
+    HashTableAbierta misContactos = new HashTableAbierta(100);
 
     public void agregarContacto(String nombre, long telefono){
-        misContactos.insertarDobleHash(nombre, telefono);
+        misContactos.insertar(nombre, telefono);
         System.out.printf("Se ha agregado el contacto: %s, con número telefónico: %d", nombre, telefono);
     }
 
     public java.lang.Long llamarContacto(String nombre){
-        if (misContactos.recuperarDobleHash(nombre) != null) {
-            System.out.printf("Llamando a %s - %d", nombre, misContactos.recuperarDobleHash(nombre) );
+        if (misContactos.recuperar(nombre) != null) {
+            System.out.printf("Llamando a %s - %d", nombre, misContactos.recuperar(nombre) );
             // Simulando una llamada
             try {
                 System.out.println("...");
@@ -25,16 +26,15 @@ public class Contactos {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return misContactos.recuperarDobleHash(nombre);
+            return misContactos.recuperar(nombre);
         }
         System.out.printf("%s no se encuentra en tu lista de contactos.", nombre);
         return null;
     }
 
     public boolean modificarContacto(String nombre, long telefono) {
-        if (misContactos.recuperarDobleHash(nombre) != null) {
-            misContactos.modificar(nombre, telefono);
-            System.out.printf("Se modificó el contacto %s - %d", nombre, misContactos.recuperarDobleHash(nombre));
+        if (misContactos.recuperar(nombre) != null) {
+            System.out.printf("Se modificó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
             return true;
         }
         System.out.printf("%s no se encuentra en tu lista de contactos.", nombre);
@@ -42,9 +42,8 @@ public class Contactos {
     }
 
     public boolean eliminarContacto(String nombre){
-        if (misContactos.recuperarDobleHash(nombre) != null) {
-            misContactos.borrar(nombre);
-            System.out.printf("Se eliminó el contacto %s - %d", nombre, misContactos.recuperarDobleHash(nombre));
+        if (misContactos.recuperar(nombre) != null) {
+            System.out.printf("Se eliminó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
             return true;
         }
         System.out.printf("%s no se encuentra en tus contactos.", nombre);
@@ -55,8 +54,7 @@ public class Contactos {
         System.out.println("\nMostrando los contactos en la agenda:\n");
         for (int i = 0; i < misContactos.obtenerTamaño(); i++){
             try {
-                System.out.printf("%s - %d", misContactos.obtenerElementos(i).llave, misContactos.obtenerElementos(i).valor);
-                System.out.println("");
+                misContactos.obtenerElementos(i);
             } catch (NullPointerException e){
                 System.out.printf("");
             }
@@ -82,7 +80,7 @@ public class Contactos {
             } catch (InputMismatchException e) {
                 System.out.println("Opción inválida. ");
             }
-                switch (opcion) {
+            switch (opcion) {
                 case 1: {
                     System.out.println("Ingrese el nombre de su nuevo contacto: ");
                     String nombre = in.nextLine();
@@ -103,10 +101,6 @@ public class Contactos {
                 case 3: {
                     System.out.println("Ingrese el nombre del contacto que desea modificar: ");
                     String nombre = in.nextLine();
-                    if (misContactos.recuperarDobleHash(nombre) == null){
-                        System.out.println(nombre + " no existe en tu lista de contactos");
-                        break;
-                    }
                     System.out.println("Ingrese nuevo teléfono del contacto: ");
 
                     long telefono = in.nextLong();
@@ -131,7 +125,7 @@ public class Contactos {
                 default : {
                     System.out.println("Opción inválida. ");
                 }
-                }
+            }
             System.out.println("\nPresione 'q' para salir de la aplicación.");
             String continuar = in.nextLine();
             if (continuar.equals("q")){

@@ -50,7 +50,7 @@ public class HashTable {
     * Utiliza el método de linear probing para evitar colisiones.
     * @params:
     *   String llave: La llave que vamos a utilizar para localizar al elemento.
-    *   int valor: El valor asociado con la llave.
+    *   long valor: El valor asociado con la llave.
     * @returns:
     *   void (También podría regresar un Booleano para comprobar si todo salió en orden).
     * */
@@ -321,6 +321,8 @@ public class HashTable {
             // Si no se encuentra en la primera celda, se debe hacer el doble hasheo
             hashValue = (hashValue + termino * (this.PRIMO - (hashFunction2(llave) % this.PRIMO))) % this.tamaño;
             termino++;
+            // Se resta el número de elementos
+            this.numElementos--;
         }
         System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
     }
@@ -378,4 +380,63 @@ public class HashTable {
         return null;
     }
 
+    /* Esta clase main nos sirve para probar los métodos de la clase, pero no instancía los métodos de Contactos.java.
+    * */
+    public static void main(String args[]){
+        System.out.println("Implementación de una Hash Table! ");
+
+        // Instanciamos una clase HashTable e insertamos 8 valores.
+        HashTable myHash = new HashTable(10);
+        myHash.insertar("Víctor", 28);
+        myHash.insertar("Hugo", 28);
+        myHash.insertar("Israel", 30);
+        myHash.insertar("Rodrigo", 28);
+        myHash.insertar("Cristina", 38);
+        // En este momento, la Hash Table ha rebasado el límite crítico de espacios vacíos.
+        myHash.insertar("Rafael", 63);
+
+
+        // Los siguientes elementos proporcionarían una colisión:
+        myHash.insertar("ad", 1);
+        myHash.insertar("ga", 2);
+
+        // Recuperando el valor con la llave "Hugo"
+        System.out.println("\n\nRecuperamos el valor almacenado con la llave 'Hugo'");
+        System.out.println(myHash.recuperar("Hugo"));
+
+        // Intentamos recuperar un valor que no existe
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Java'");
+        System.out.println(myHash.recuperar("Java"));
+
+        // Intentemos recuperar elementos que proporcionan colisiones
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'ad'");
+        System.out.println(myHash.recuperar("ad"));
+
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'ga'");
+        System.out.println(myHash.recuperar("ga"));
+
+        // Intentando los métodos de insertar y recuperar con quadratic probing (método anti colisiones)
+        myHash.insertarCuadratica("Cuadratico", 22);
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Cuadratico'");
+        System.out.println(myHash.recuperarCuadrada("Cuadratico"));
+
+        // Si intentamos recuperar el elemento que fue insertado con Quadratic probing, utilizando una función que usa linear probing:
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Cuadratico', pero utilizando linear probing");
+        System.out.println(myHash.recuperar("Cuadratico"));
+
+        // Probamos los métodos de doble hasheo (insertar y recuperar)
+        myHash.insertarDobleHash("Doble Hasheo", 30);
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Doble Hasheo'");
+        System.out.println(myHash.recuperarDobleHash("Doble Hasheo"));
+
+        // Probamos borrando uno de los primeros elementos y luego intentamos recuperarlo
+        System.out.println("\nBorraremos la llave correspondiente a: 'Doble Hasheo'");
+        myHash.borrar("Doble Hasheo");
+        System.out.println(myHash.recuperarDobleHash("Doble Hasheo"));
+
+        // Modificamos ahora el valor contenido en "Víctor".
+        myHash.modificar("Víctor", 25);
+        System.out.println("\nRecuperamos la llave correspondiente a: 'Víctor'");
+        System.out.println(myHash.recuperarDobleHash("Víctor"));
+    }
 }
