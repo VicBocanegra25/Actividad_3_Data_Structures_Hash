@@ -4,9 +4,9 @@
 * */
     public class Entrada{
         String llave;
-        int valor;
+    java.lang.Long valor;
 
-        public Entrada(String llave, int valor) {
+        public Entrada(String llave, java.lang.Long valor) {
             this.llave = llave;
             this.valor = valor;
 

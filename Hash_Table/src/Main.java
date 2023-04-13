@@ -22,7 +22,7 @@ public class Main {
         myHash.insertar("ga", 2);
 
         // Recuperando el valor con la llave "Hugo"
-        System.out.println("\nRecuperamos el valor almacenado con la llave 'Hugo'");
+        System.out.println("\n\nRecuperamos el valor almacenado con la llave 'Hugo'");
         System.out.println(myHash.recuperar("Hugo"));
 
         // Intentamos recuperar un valor que no existe
@@ -42,9 +42,27 @@ public class Main {
         System.out.println(myHash.recuperarCuadrada("Cuadratico"));
 
         // Si intentamos recuperar el elemento que fue insertado con Quadratic probing, utilizando una función que usa linear probing:
-        System.out.println("\nRecuperamos el valor almacenado con la llave 'Cuadratico'");
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Cuadratico', pero utilizando linear probing");
         System.out.println(myHash.recuperar("Cuadratico"));
 
+        // Probamos los métodos de doble hasheo (insertar y recuperar)
+        myHash.insertarDobleHash("Doble Hasheo", 30);
+        System.out.println("\nRecuperamos el valor almacenado con la llave 'Doble Hasheo'");
+        System.out.println(myHash.recuperarDobleHash("Doble Hasheo"));
+
+        // Probamos borrando uno de los primeros elementos y luego intentamos recuperarlo
+        System.out.println("\nBorraremos la llave correspondiente a: 'Doble Hasheo'");
+        myHash.borrar("Doble Hasheo");
+        System.out.println(myHash.recuperarDobleHash("Doble Hasheo"));
+
+        // Modificamos ahora el valor contenido en "Víctor".
+        myHash.modificar("Víctor", 25);
+        System.out.println("\nRecuperamos la llave correspondiente a: 'Víctor'");
+        System.out.println(myHash.recuperarDobleHash("Víctor"));
+
+        // Vamos a instanciar un objeto de la clase Contactos, que simula una agenda telefónica.
+        Contactos miAgenda = new Contactos();
+        miAgenda.inicializar();
 
 
     }

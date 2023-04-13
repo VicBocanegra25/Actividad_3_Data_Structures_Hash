@@ -9,12 +9,15 @@ public class HashTable {
     private int numElementos;
     private double FACTORCARGA;
 
+    // Agregamos un número primo para la técnica de double-hashing
+    private int PRIMO;
+
     public HashTable(int tamaño) {
         this.tamaño = tamaño;
         this.espacios = new Entrada[this.tamaño];
         this.numElementos = 0;
         this.FACTORCARGA = 0.65;
-
+        this.PRIMO = 3;
     }
 
     /* El método hashFunction nos permite transformar una entrada (la llave) en un hashValue(entero).
@@ -51,7 +54,7 @@ public class HashTable {
     * @returns:
     *   void (También podría regresar un Booleano para comprobar si todo salió en orden).
     * */
-    public void insertar(String llave, int valor){
+    public void insertar(String llave, long valor){
         // Generamos una nueva entrada con llave, valor
         Entrada nuevoElemento = new Entrada(llave, valor);
         // Obtenemos el HashValue llamando a la función hashFunction
@@ -95,6 +98,12 @@ public class HashTable {
         }
     }
 
+    /* La función agrandar() genera una nueva HashTable con el doble de tamaño.
+    params:
+        ninguno
+    @returns:
+        void
+    * */
     public void agrandar(){
         // Se genera una nueva HashTable con el doble de tamaño
         HashTable nuevaHashTable = new HashTable(this.tamaño * 2);
@@ -120,9 +129,9 @@ public class HashTable {
     * @params:
     *   String llave: La cadena con la que almacenamos el valor dentro de la hash table.
     * @returns:
-    *   Entrada
+    *   long: El valor almacenado en esa llave
     * */
-    public java.lang.Integer recuperar(String llave){
+    public java.lang.Long recuperar(String llave){
         // Primero calculamos un hashValue
         int hashValue = hashFunction(llave);
 
@@ -144,11 +153,11 @@ public class HashTable {
      * Utiliza el método de quadratic probing para evitar colisiones.
      * @params:
      *   String llave: La llave que vamos a utilizar para localizar al elemento.
-     *   int valor: El valor asociado con la llave.
+     *   long valor: El valor asociado con la llave.
      * @returns:
      *   void (También podría regresar un Booleano para comprobar si todo salió en orden).
      * */
-    public void insertarCuadratica(String llave, int valor){
+    public void insertarCuadratica(String llave, long valor){
         // Generamos una nueva entrada con llave, valor
         Entrada nuevoElemento = new Entrada(llave, valor);
         // Obtenemos el HashValue llamando a la función hashFunction
@@ -182,7 +191,7 @@ public class HashTable {
      * @returns:
      *   Entrada
      * */
-    public java.lang.Integer recuperarCuadrada(String llave){
+    public java.lang.Long recuperarCuadrada(String llave){
         // Primero calculamos un hashValue
         int hashValue = hashFunction(llave);
         // Puesto que esta función utiliza quadratic probing, se requiere el término a la potencia n
@@ -199,4 +208,174 @@ public class HashTable {
         System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
         return null;
     }
+
+    /* El método hashFunction2 es similar a hashFunction, pero sin realizar la operación módulo (%) entre el hash value y el tamaño de la Hash Table.
+     * Nos permite transformar una entrada (la llave) en un hashValue(entero).
+     * Esta función auxiliar es necesaria para implementar el método anti-colisión llamado double-hashing.
+     * @params:
+     *   String s: La llave 'string' que vamos a convertir en un hashValue.
+     * @returns:
+     *   int hv: El entero hashValue que se produce con la función. Se utilizará para acceder al valor de la HashTable.
+     *  */
+    private int hashFunction2(String s) {
+        // Utilizamos un multiplicador para cada posición de la cadena, el cual se incrementará conforme avanzamos en la cadena
+        int mult = 1;
+        // Inicializamos el valor del hashValue en 0
+        int hashValue = 0;
+        // Utilizamos un for loop para recorrer la cadena string, convertir cada letra en un entero(ord - ASCII), multiplicar
+        // este valor por el mult y sumarlo al hashValue
+        for (int i = 0; i < s.length(); i++){
+            // Tomamos la letra en la posición i
+            char ch = s.charAt(i);
+            // Transformamos la letra en un entero
+            hashValue += mult * (int) ch;
+            mult += 1;
+        }
+        return hashValue;
+    }
+
+    /* El método insertarDobleHash() nos sirve para colocar una nueva entrada en la HashTable.
+     * Es similar a las otras funciones para insertar, pero hace un doble hasheo para evitar clústers primarios (con linear probing)
+     * y secundarios (con quadratic probing). Llama la función hashFunction y hashFunction2 en caso de que encuentre una colisión.
+     * @params:
+     *   String llave: La llave que vamos a utilizar para localizar al elemento.
+     *   long valor: El valor asociado con la llave.
+     * @returns:
+     *   void (También podría regresar un Booleano para comprobar si todo salió en orden).
+     * */
+    public void insertarDobleHash(String llave, long valor){
+        // Generamos una nueva entrada con llave, valor
+        Entrada nuevoElemento = new Entrada(llave, valor);
+        // Obtenemos el HashValue llamando a la función hashFunction
+        int hashValue = hashFunction(llave);
+        int factor = 1;
+
+        // Atravesamos los espacios en la HashTable hasta encontrar un espacio vacío o uno que ya esté ocupado por la misma llave
+        while (this.espacios[hashValue] != null){
+            // Si encontramos la llave en algún espacio, salimos del bucle
+            if (this.espacios[hashValue].llave.equals(llave)){
+                break;
+            }
+            // Realizamos el doblehasheo llamadno a la función hashFunction2
+            hashValue = (hashValue + factor * (this.PRIMO - hashFunction2(llave) % this.PRIMO)) % this.tamaño;
+            factor++;
+        }
+        // Si el espacio estaba disponible, lo insertamos ahí e incrementamos la variable numElementos
+        if (this.espacios[hashValue] == null){
+            this.numElementos++;
+        }
+        this.espacios[hashValue] = nuevoElemento;
+        revisarCarga();
+    }
+
+    /* La función recuperarDobleHash() es el complemento de la función insertarDobleHash().
+     * Nos regresa el valor almacenado que corresponde a la llave indicada por el usuario.
+     * Para hacerlo, se debe llamar a la función hashFunction2 que nos otorgará el valor del hash.
+     * @params:
+     *   String llave: La cadena con la que almacenamos el valor dentro de la hash table.
+     * @returns:
+     *   long: El valor almacenado con esa llave
+     * */
+    public java.lang.Long recuperarDobleHash(String llave){
+        // Primero calculamos un hashValue
+        int hashValue = hashFunction(llave);
+        // Puesto que esta función utiliza double hashing, se requiere el término al que se sumará el hashValue inicial
+        int termino = 1;
+        // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
+        while (this.espacios[hashValue] != null){
+            if (this.espacios[hashValue].llave.equals(llave)){
+                return this.espacios[hashValue].valor;
+            }
+            // Si no se encuentra en la primera celda, se debe hacer el doble hasheo
+            hashValue = (hashValue + termino * (this.PRIMO - (hashFunction2(llave) % this.PRIMO))) % this.tamaño;
+            termino++;
+        }
+        System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
+        return null;
+    }
+
+    /* La función de borrado utiliza la técnica de doble hasheo para encontrar la llave-valor indicada por el usuario.
+    * El elemento que corresponde a la llave indicada por el usuario apuntará a null. Si no existe la llave, se imprimirá
+    * un mensaje indicando que la llave no existe en la Hash Table.
+    * @params:
+    *   String llave: La llave indicada por el usuario, es con esta llave que se buscará el elemento a borrar.
+    * @returns:
+    *   void. Pero se imprime un mensaje en cualquiera de los dos casos.
+    * */
+    public void borrar(String llave){
+        // Primero calculamos un hashValue
+        int hashValue = hashFunction(llave);
+        // Puesto que esta función utiliza double hashing, se requiere el término al que se sumará el hashValue inicial
+        int termino = 1;
+
+        // Inicializamos una variable que almacenará temporalmente el valor que nos regrese el hash
+        long temporal;
+
+        // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
+        while (this.espacios[hashValue] != null){
+            if (this.espacios[hashValue].llave.equals(llave)){
+                temporal = this.espacios[hashValue].valor;
+                this.espacios[hashValue].valor = null;
+                System.out.println("Se ha borrado la llave-valor" + espacios[hashValue].llave + " - " + temporal);
+            }
+            // Si no se encuentra en la primera celda, se debe hacer el doble hasheo
+            hashValue = (hashValue + termino * (this.PRIMO - (hashFunction2(llave) % this.PRIMO))) % this.tamaño;
+            termino++;
+        }
+        System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
+    }
+
+    /* La función modificar() nos sirve para cambiar el valor almacenado en una llave determinada.
+    * El usuario pasa la llave y el nuevo valor que deberá estar almacenado en esta llave y se cambia el valor.
+    * @params:
+    *   String llave: El valor de la llave con la cual se almacenó el valor originalmente.
+    *   long nuevoValor: El nuevo valor que deberá almacenar.
+    * @returns:
+    *   Boolean: True si se ha podido modificar / False si no se pudo modificar el contenido.
+    *     * */
+    public Boolean modificar(String llave, long nuevoValor){
+        // Primero calculamos un hashValue
+        int hashValue = hashFunction(llave);
+        // Puesto que esta función utiliza double hashing, se requiere el término al que se sumará el hashValue inicial
+        int termino = 1;
+
+        // Inicializamos una variable que almacenará temporalmente el valor original
+        long temporal;
+
+        // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
+        while (this.espacios[hashValue] != null){
+            if (this.espacios[hashValue].llave.equals(llave)){
+                temporal = this.espacios[hashValue].valor;
+                this.espacios[hashValue].valor = nuevoValor;
+                System.out.println("\nSe ha modificado el elemento contenido en" + espacios[hashValue].llave);
+                System.out.println("El valor anterior era: " + temporal + ". El nuevo valor es: " + nuevoValor);
+                return true;
+            }
+            // Si no se encuentra en la primera celda, se debe hacer el doble hasheo
+            hashValue = (hashValue + termino * (this.PRIMO - (hashFunction2(llave) % this.PRIMO))) % this.tamaño;
+            termino++;
+        }
+        System.out.println("\nNo se encontró el valor correspondiente a: " + llave);
+        return false;
+    }
+
+    /* ObtenerTamaño es una función auxiliar para obtener el tamaño de la HashTable
+    @ params:
+        null
+    @ returns:
+        int tamaño: El tamaño actual de la HashTable
+    * */
+    public int obtenerTamaño(){
+        return this.tamaño;
+    }
+
+    /* obtenerElementos es una función auxiliar para obtener el número de elementos de la HashTable
+    * */
+    public Entrada obtenerElementos(int index){
+        if (index >= 0 && index <= espacios.length) {
+            return espacios[index];
+        }
+        return null;
+    }
+
 }
