@@ -1,12 +1,14 @@
-/* Implementación de una Hash Table simple. Se hace uso de la clase Entrada.
-* La clase HashTable implementa hasta el momento las funciones: insertar() y revisarCarga() y agrandar(), posteriormente se implementarán
-* otros métodos para obtener valores.
+/* Implementación de una Hash Table Cerrada. Se hace uso de la clase Entrada.
+* La clase HashTable implementa hasta el momento las funciones: insertar(), recuperar(), agrandar(), revisarCarga(),
+* modificar() y eliminar(), además de otras funciones auxiliares para regresar el tamaño y número de Elementos de la tabla.
+* También incorpora dos funciones Hash (hashFunction1 y hashFunction2).
 * */
 
 public class HashTable {
     private int tamaño;
     private Entrada[] espacios;
     private int numElementos;
+    // El factor de carga se usa para mantener un control de las celdas libres.
     private double FACTORCARGA;
 
     // Agregamos un número primo para la técnica de double-hashing

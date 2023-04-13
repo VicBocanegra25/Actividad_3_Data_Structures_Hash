@@ -178,14 +178,28 @@ public class HashTableAbierta {
     /* El método main() nos sirve para probar los otros métodos de esta clase.
     * */
     public static void main(String args[]){
+        // Probamos los métodos de la clase.
+        System.out.println("Instanciando la Hash Abierta: ");
         HashTableAbierta myHashAbierta = new HashTableAbierta(5);
+        // Insertamos dos valores que causarán colisión
         myHashAbierta.insertar("hello world", 28);
         myHashAbierta.insertar("world hello", 30);
+
+        // Insertamos un valor más
         myHashAbierta.insertar("Víctor", 28);
+
+        // Intentamos recuperar un valor que no existe
         System.out.println(myHashAbierta.recuperar("bleh"));
+
+        // Comprobamos que funciona el método borrar
         myHashAbierta.borrar("Víctor");
+
+        // Intentamos borrar algo que no existe en la Hash Table
         myHashAbierta.borrar("Víctor2");
+
+        // Modificamos el valor en una entrada existente
         myHashAbierta.modificar("hello world", 29);
+
 
     }
 }

@@ -2,7 +2,7 @@ import java.sql.SQLOutput;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-/* Aplicación práctica de la clase HashTable. Se simulará una agenda telefónica en donde un usuario puede guardar sus contactos.
+/* Aplicación práctica de la clase HashTable Cerrada. Se simulará una agenda telefónica en donde un usuario puede guardar sus contactos.
 * Esta clase instancía la clase HashTable y le pone nombres distintos a los métodos: llamarContacto, agregarContacto, modificarContacto,
 * eliminarContacto y verContactos.
 * La agenda se inicializa con un espacio inicial de 100 contactos.

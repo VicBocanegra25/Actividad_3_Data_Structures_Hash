@@ -37,4 +37,6 @@ La llave es de tipo String, el valor a almacenar es entero (long).
 ### Notas importantes
 
 1. Las clases tienen su propio método main(), pero es sólo para fines de debuggeo, la clase Main es la importante para probar las aplicaciones reales (una agenda telefónica).
-2. La clase Contactos y ContactosAbierta funcionan de la misma forma, sólo que su implementación por detrás es distinta. Una implementa una Hash Abierta y la otra una Hash Cerrada. El usuario no debe notar la diferencia entre una u otra y en el método main una se ejecuta seguida de la otra para que el usuario pueda comprobar su funcionamiento. 
+2. La clase Contactos y ContactosAbierta funcionan de la misma forma, sólo que su implementación por detrás es distinta. Una implementa una Hash Abierta y la otra una Hash Cerrada. El usuario no debe notar la diferencia entre una u otra y en el método main una se ejecuta seguida de la otra para que el usuario pueda comprobar su funcionamiento.
+
+**Las clases se encuentran en la ruta: Actividad_3_Data_Structures_Hash/Hash_Table/src/**
