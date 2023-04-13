@@ -1,4 +1,4 @@
-import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -13,7 +13,7 @@ public class ContactosAbierta{
 
     public void agregarContacto(String nombre, long telefono){
         misContactos.insertar(nombre, telefono);
-        System.out.printf("Se ha agregado el contacto: %s, con número telefónico: %d", nombre, telefono);
+        System.out.printf("\nSe ha agregado el contacto: %s, con número telefónico: %d", nombre, telefono);
     }
 
     public java.lang.Long llamarContacto(String nombre){
@@ -28,25 +28,28 @@ public class ContactosAbierta{
             }
             return misContactos.recuperar(nombre);
         }
-        System.out.printf("%s no se encuentra en tu lista de contactos.", nombre);
+        System.out.printf("\n%s no se encuentra en tu lista de contactos.", nombre);
         return null;
     }
 
     public boolean modificarContacto(String nombre, long telefono) {
         if (misContactos.recuperar(nombre) != null) {
-            System.out.printf("Se modificó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
+            System.out.printf("\nSe modificó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
+            misContactos.modificar(nombre, telefono);
             return true;
         }
-        System.out.printf("%s no se encuentra en tu lista de contactos.", nombre);
+        System.out.printf("\n%s no se encuentra en tu lista de contactos.", nombre);
         return false;
     }
 
     public boolean eliminarContacto(String nombre){
         if (misContactos.recuperar(nombre) != null) {
-            System.out.printf("Se eliminó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
+            System.out.printf("\nSe eliminó el contacto %s - %d", nombre, misContactos.recuperar(nombre));
+            misContactos.borrar(nombre);
+
             return true;
         }
-        System.out.printf("%s no se encuentra en tus contactos.", nombre);
+        System.out.printf("\n%s no se encuentra en tus contactos.", nombre);
         return false;
     }
 
@@ -54,7 +57,8 @@ public class ContactosAbierta{
         System.out.println("\nMostrando los contactos en la agenda:\n");
         for (int i = 0; i < misContactos.obtenerTamaño(); i++){
             try {
-                misContactos.obtenerElementos(i);
+                System.out.printf("%s - %d", misContactos.obtenerElementos(i).llave, misContactos.obtenerElementos(i).valor);
+                System.out.println();
             } catch (NullPointerException e){
                 System.out.printf("");
             }
@@ -95,14 +99,18 @@ public class ContactosAbierta{
                     System.out.println("Ingrese el nombre del contacto al que desea llamar: ");
                     String nombre = in.nextLine();
                     llamarContacto(nombre);
-                    verContactos();
                     break;
                 }
                 case 3: {
                     System.out.println("Ingrese el nombre del contacto que desea modificar: ");
                     String nombre = in.nextLine();
-                    System.out.println("Ingrese nuevo teléfono del contacto: ");
 
+                    if (misContactos.recuperar(nombre) == null){
+                        System.out.println(nombre + " no existe en tu lista de contactos");
+                        verContactos();
+                        break;
+                    }
+                    System.out.println("Ingrese nuevo teléfono del contacto: ");
                     long telefono = in.nextLong();
                     in.nextLine(); // Consume the newline character
 

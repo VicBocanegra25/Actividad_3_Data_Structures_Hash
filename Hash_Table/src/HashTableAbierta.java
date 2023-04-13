@@ -118,7 +118,6 @@ public class HashTableAbierta {
                 return true;
             }
         }
-
         System.out.println("\nNo se encontró el valor correspondiente a '" + llave + "'.");
         return false;
     }
@@ -169,13 +168,11 @@ public class HashTableAbierta {
 
     /* obtenerElementos es una función auxiliar para obtener el número de elementos de la HashTable
      * */
-    public void obtenerElementos(int index) {
-        System.out.println("Hash table is :-");
-        System.out.println("Index \t\tValues");
-        for (int x = 0; x < this.tamaño; x++) {
-            System.out.print(x + "\t\n");
-            System.out.println(espacios[x]);
-        }
+    public Entrada obtenerElementos(int index){
+        for (int i = 0; i < espacios[index].size(); i++) {
+            return (Entrada) espacios[index].get(i);
+            }
+        return null;
     }
 
     /* El método main() nos sirve para probar los otros métodos de esta clase.

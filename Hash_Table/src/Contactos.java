@@ -97,7 +97,6 @@ public class Contactos {
                     System.out.println("Ingrese el nombre del contacto al que desea llamar: ");
                     String nombre = in.nextLine();
                     llamarContacto(nombre);
-                    verContactos();
                     break;
                 }
                 case 3: {
@@ -105,6 +104,7 @@ public class Contactos {
                     String nombre = in.nextLine();
                     if (misContactos.recuperarDobleHash(nombre) == null){
                         System.out.println(nombre + " no existe en tu lista de contactos");
+                        verContactos();
                         break;
                     }
                     System.out.println("Ingrese nuevo teléfono del contacto: ");

@@ -3,8 +3,8 @@
 *
 * */
     public class Entrada{
-        String llave;
-    java.lang.Long valor;
+        public String llave;
+        public java.lang.Long valor;
 
         public Entrada(String llave, java.lang.Long valor) {
             this.llave = llave;
