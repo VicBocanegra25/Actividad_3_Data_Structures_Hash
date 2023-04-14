@@ -316,9 +316,9 @@ public class HashTable {
         // Atravesamos la Hash Table buscando el hashValue que obtuvimos y comparando el valor obtenido
         while (this.espacios[hashValue] != null){
             if (this.espacios[hashValue].llave.equals(llave)){
-                temporal = this.espacios[hashValue].valor;
-                this.espacios[hashValue].valor = null;
-                System.out.println("Se ha borrado la llave-valor" + espacios[hashValue].llave + " - " + temporal);
+                // Eliminamos la entrada en esta posición
+                System.out.println("Se ha borrado la llave-valor" + espacios[hashValue].llave + " - " + this.espacios[hashValue].valor);
+                this.espacios[hashValue] = null;
             }
             // Si no se encuentra en la primera celda, se debe hacer el doble hasheo
             hashValue = (hashValue + termino * (this.PRIMO - (hashFunction2(llave) % this.PRIMO))) % this.tamaño;

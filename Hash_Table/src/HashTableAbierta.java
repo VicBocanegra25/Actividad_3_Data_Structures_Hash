@@ -10,7 +10,7 @@ public class HashTableAbierta {
     private int numElementos;
 
     public HashTableAbierta(int tamaño) {
-        this.tamaño = 6;
+        this.tamaño = tamaño;
         this.espacios = new ArrayList[tamaño];
 
         // Cada entrada de nuestra tabla Hash será un array del tamaño indicado por el usuario.
@@ -111,9 +111,9 @@ public class HashTableAbierta {
             Entrada temporal = (Entrada)this.espacios[hashValue].get(i);
             // Si encontramos la llave solicitada en alguna posición del array, lo eliminamos
             if (temporal.llave.equals(llave)){
-                valor = temporal.valor;
+                // Se elimina la entrada del array
+                System.out.println("Se ha borrado la llave-valor '" + llave + " - " + temporal.valor + "'.");
                 this.espacios[hashValue].remove(i);
-                System.out.println("Se ha borrado la llave-valor '" + llave + " - " + valor + "'.");
                 this.numElementos--;
                 return true;
             }
